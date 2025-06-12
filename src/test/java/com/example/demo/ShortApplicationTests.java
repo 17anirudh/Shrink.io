@@ -1,10 +1,10 @@
-package com.link.shortner;
+package com.example.demo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ShortnerApplicationTests {
+class ShortApplicationTests {
 
 	@Test
 	void contextLoads() {
