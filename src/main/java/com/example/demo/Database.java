@@ -52,9 +52,6 @@ public class Database {
             e.printStackTrace();
             return false;
         }
-         finally{
-            close();
-         }
     }
 
     public void insertDocument(Document doc) {
@@ -64,9 +61,6 @@ public class Database {
         } catch (MongoException e) {
             e.printStackTrace();
         } 
-        finally {
-            close();
-        }
     }
 
     public void close() {

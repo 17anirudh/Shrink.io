@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.bson.Document;
 
 public class Backend {
-    private static final String BASE116 = "అఆఇఈఉఊఋౠఌౡఎఏఐఒఓఔకఖగఘఙచఛజఝఞటఠడఢణతథదధనపఫబభమయరలవశషసహళక్షఱ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     
     public String isValidURL(String url) {
     if (url == null || url.trim().isEmpty()) {
@@ -34,7 +34,6 @@ public class Backend {
         return shortenURL(convertedUrl.toString());
     } catch (Exception e) {
         System.out.println("Exception in isValidURL: " + e.getClass().getSimpleName() + " - " + e.getMessage());
-        e.printStackTrace(); // This will help identify where the MongoDB error is coming from
         return "Invalid";
     }
 }
@@ -45,8 +44,8 @@ public class Backend {
         while (true) {
             UUID uuid = UUID.randomUUID();
             BigInteger bigInt = new BigInteger(uuid.toString().replace("-", ""), 16);
-            key = toBase116(bigInt).substring(0, 8);
-            key = "ఱ.ly/" + key; 
+            key = toBase62(bigInt).substring(0, 8);
+            key = "tinyurl.ly/" + key; 
             System.out.println("Generated key: " + key);
             if (!db.keyExists(key)) {
                 Document doc = new Document("key", key).append("url", longUrl);
@@ -57,11 +56,11 @@ public class Backend {
         return key;
     }
 
-    private static String toBase116(BigInteger value) {
+    private static String toBase62(BigInteger value) {
         StringBuilder sb = new StringBuilder();
         while(value.compareTo(BigInteger.ZERO) > 0) {
-            BigInteger[] qR = value.divideAndRemainder(BigInteger.valueOf(116));
-            sb.append(BASE116.charAt(qR[1].intValue()));
+            BigInteger[] qR = value.divideAndRemainder(BigInteger.valueOf(62));
+            sb.append(BASE62.charAt(qR[1].intValue()));
             value = qR[0];
         }
         return sb.reverse().toString();
