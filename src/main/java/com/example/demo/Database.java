@@ -17,6 +17,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class Database {
     private MongoDatabase database;
     private MongoClient mongoClient;
+    private String DB_NAME = "DB";
+    private String COLLECTION_NAME = "COLLECT";
     Dotenv dotenv = Dotenv.load();
     String DB_URL = dotenv.get("DB_URL");
 
@@ -25,9 +27,7 @@ public class Database {
         if (DB_URL == null || DB_URL.trim().isEmpty()) {
             throw new IllegalArgumentException("Database URL cannot be null or empty");
         }
-        
-        System.out.println("DB URL: " + DB_URL); 
-        
+                
         ServerApi serverApi = ServerApi.builder().version(ServerApiVersion.V1).build();
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(DB_URL))
@@ -35,8 +35,8 @@ public class Database {
                 .build();
 
         try {
-            mongoClient = MongoClients.create(settings); // Don't use try-with-resources here
-            database = mongoClient.getDatabase("Shorters");
+            mongoClient = MongoClients.create(settings); 
+            database = mongoClient.getDatabase(DB_NAME);
             database.runCommand(new Document("ping", 1));
             System.out.println("Pinged your deployment. You successfully connected to MongoDB!");
         } catch (MongoException e) {
@@ -47,7 +47,7 @@ public class Database {
     public Boolean keyExists(String key) {
         try {
             Document query = new Document("key", key);
-            return database.getCollection("URL").countDocuments(query) > 0;
+            return database.getCollection(COLLECTION_NAME).countDocuments(query) > 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -56,7 +56,8 @@ public class Database {
 
     public void insertDocument(Document doc) {
         try {
-            database.getCollection("URL").insertOne(doc);
+            database.getCollection(COLLECTION_NAME).insertOne(doc);
+            System.out.println("Document inserted successfully: " + doc.toJson());
             close();
         } catch (MongoException e) {
             e.printStackTrace();

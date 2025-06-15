@@ -45,10 +45,10 @@ public class Backend {
             UUID uuid = UUID.randomUUID();
             BigInteger bigInt = new BigInteger(uuid.toString().replace("-", ""), 16);
             key = toBase62(bigInt).substring(0, 8);
-            key = "tinyurl.ly/" + key; 
+            key = "localhost:5000/" + key; 
             System.out.println("Generated key: " + key);
             if (!db.keyExists(key)) {
-                Document doc = new Document("key", key).append("url", longUrl);
+                Document doc = new Document("key", key).append("url", longUrl).append("createdAt", System.currentTimeMillis());
                 db.insertDocument(doc);
                 break;
             }
