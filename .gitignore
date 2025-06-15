@@ -10,3 +10,4 @@ compose.yaml
 README.Docker.md
 .dockerignore
 version.ps1
+versions.txt
