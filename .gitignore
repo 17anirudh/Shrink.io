@@ -9,4 +9,4 @@ Dockerfile
 compose.yaml
 README.Docker.md
 .dockerignore
-version.sh
+version.ps1
