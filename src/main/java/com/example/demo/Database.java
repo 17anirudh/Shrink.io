@@ -23,7 +23,6 @@ public class Database {
     String DB_URL = dotenv.get("DB_URL");
 
     public Database() {
-        System.out.println(DB_URL);
         if (DB_URL == null || DB_URL.trim().isEmpty()) {
             throw new IllegalArgumentException("Database URL cannot be null or empty");
         }
@@ -38,7 +37,6 @@ public class Database {
             mongoClient = MongoClients.create(settings); 
             database = mongoClient.getDatabase(DB_NAME);
             database.runCommand(new Document("ping", 1));
-            System.out.println("Pinged your deployment. You successfully connected to MongoDB!");
         } catch (MongoException e) {
             e.printStackTrace();
         }
@@ -57,7 +55,6 @@ public class Database {
     public void insertDocument(Document doc) {
         try {
             database.getCollection(COLLECTION_NAME).insertOne(doc);
-            System.out.println("Document inserted successfully: " + doc.toJson());
             close();
         } catch (MongoException e) {
             e.printStackTrace();
