@@ -1,69 +1,110 @@
 package com.example.demo;
 
-import org.bson.Document;
 import org.springframework.stereotype.Component;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoException;
-import com.mongodb.ServerApi;
-import com.mongodb.ServerApiVersion;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
-
-import io.github.cdimascio.dotenv.Dotenv;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 
 @Component
 public class Database {
-    private MongoDatabase database;
-    private MongoClient mongoClient;
-    private String DB_NAME = "DB";
-    private String COLLECTION_NAME = "COLLECT";
-    Dotenv dotenv = Dotenv.load();
-    String DB_URL = dotenv.get("DB_URL");
-
-    public Database() {
-        if (DB_URL == null || DB_URL.trim().isEmpty()) {
-            throw new IllegalArgumentException("Database URL cannot be null or empty");
-        }
-                
-        ServerApi serverApi = ServerApi.builder().version(ServerApiVersion.V1).build();
-        MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(DB_URL))
-                .serverApi(serverApi)
-                .build();
-
+    public void printSQLExceptionErroStatement(){
+        System.out.println("Database connection not established");
+    }
+    public Connection openConnection(){
         try {
-            mongoClient = MongoClients.create(settings); 
-            database = mongoClient.getDatabase(DB_NAME);
-            database.runCommand(new Document("ping", 1));
-        } catch (MongoException e) {
-            e.printStackTrace();
+            Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/uri", "root", "root@2004");
+            return conn;
+        }
+        catch (SQLTimeoutException e)
+        {
+            System.out.println("Timeout, please wait....");
+            System.exit(0);
+        } 
+        catch (SQLException e) {
+            printSQLExceptionErroStatement();
+            System.exit(0);
+        }
+        return null;
+    }
+    public void insertValues(String key, String url){
+        try {
+            Connection conn = openConnection();
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO url (pack, link) VALUES (?, ?)");
+            statement.setString(1, key);
+            statement.setString(2, url);
+            statement.executeUpdate();
+            conn.close();
+            statement.close();
+        }
+        catch (SQLException e){
+            printSQLExceptionErroStatement();
+            System.exit(0);
         }
     }
-
-    public Boolean keyExists(String key) {
+    public boolean keyExists(String key){
         try {
-            Document query = new Document("key", key);
-            return database.getCollection(COLLECTION_NAME).countDocuments(query) > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
+            Connection conn = openConnection();
+            PreparedStatement statement = conn.prepareStatement("SELECT pack from url WHERE pack = ?");
+            statement.setString(1, key);
+            ResultSet rs = statement.executeQuery();
+            boolean found = rs.next();
+            if (found) {
+                conn.close();
+                statement.close();
+                rs.close();
+                return true;
+            }
+            statement.close();
+            rs.close();
             return false;
         }
+        catch (SQLException e) {
+            printSQLExceptionErroStatement();
+            System.exit(0);
+        }
+        return false;
     }
-
-    public void insertDocument(Document doc) {
+    public String[] urlExists(String url){
         try {
-            database.getCollection(COLLECTION_NAME).insertOne(doc);
-            close();
-        } catch (MongoException e) {
-            e.printStackTrace();
-        } 
+            Connection conn = openConnection();
+            PreparedStatement statement = conn.prepareStatement("SELECT pack from url WHERE link = ?");
+            statement.setString(1, url);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()){
+                conn.close();
+                statement.close();
+                rs.close();
+                return new String[] {"true", rs.getString("pack")};
+            }
+            conn.close();
+            statement.close();
+            rs.close();
+            return new String[]{"false", "nothing"};
+        }
+        catch (SQLException e) {
+            printSQLExceptionErroStatement();
+            System.exit(0);
+        }
+        return new String[]{"false", "nothing"};
     }
-
-    public void close() {
-        if (mongoClient != null) {
-            mongoClient.close();
+    public void showTable(){
+        try {
+            Connection conn = openConnection();
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM url;");
+            ResultSet output = statement.executeQuery();
+            while(output.next()){
+                System.out.println(output.getString("pack") + "\t" + output.getString("link"));
+            }
+            conn.close();
+            statement.close();
+            output.close();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 }

@@ -3,50 +3,53 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.util.UUID;
-import org.bson.Document;
 
 public class Backend {
     private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private Database db = new Database();
     
     public String isValidURL(String url) {
-    if (url == null || url.trim().isEmpty()) {
-        return "Invalid";
-    }
-    url = url.trim();
-    
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        return "Invalid";
-    }
-
-    try {
-        URI uri = URI.create(url);
-        URL convertedUrl = uri.toURL();
-        
-        if (convertedUrl.getHost() == null || convertedUrl.getHost().isEmpty()) {
-            return "Invalid";
+        if (url == null) return "i";
+        url = url.trim();
+        if (url.trim().isEmpty() || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+            return "i";
         }
-        
-        return shortenURL(convertedUrl.toString());
-    } catch (Exception e) {
-        return "Invalid";
+        try {
+            URI uri = URI.create(url);
+            URL convertedUrl = uri.toURL();  
+            if (convertedUrl.getHost() == null || convertedUrl.getHost().isEmpty()) {
+                return "i";
+            }
+            String[] result = db.urlExists(url); 
+            if (result != null && result[0].equals("true")) {
+                return result[1]; 
+            }
+            return "v";
+        } 
+        catch (Exception e) {
+            return "i";
+        }
     }
-}
 
     public String shortenURL(String longUrl) {
-        Database db = new Database();
+        String verification = isValidURL(longUrl).toLowerCase();
         String key;
-        while (true) {
-            UUID uuid = UUID.randomUUID();
-            BigInteger bigInt = new BigInteger(uuid.toString().replace("-", ""), 16);
-            key = toBase62(bigInt).substring(0, 8); 
-            if (!db.keyExists(key)) {
-                Document doc = new Document("key", key).append("url", longUrl).append("createdAt", System.currentTimeMillis());
-                db.insertDocument(doc);
-                key = "localhost:5000/" + key; 
-                break;
-            }
+        if (verification.equals("i")) {
+            return "Invalid";
         }
-        return key;
+        else if (verification.equals("v")) {
+            do {
+                UUID uuid = UUID.randomUUID();
+                BigInteger bigInt = new BigInteger(uuid.toString().replace("-", ""), 16);
+                key = toBase62(bigInt).substring(0, 8); 
+            } while (db.keyExists(key));
+            db.insertValues(key, longUrl);
+            return key;
+        }
+        else {
+            db.insertValues(verification, longUrl);
+            return verification;
+        }
     }
 
     private static String toBase62(BigInteger value) {

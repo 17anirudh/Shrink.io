@@ -21,13 +21,14 @@ public class Frontend {
             response.put("error", "URL cannot be empty");
             return ResponseEntity.ok(response);
         }
-        String shortUrl = backend.isValidURL(longUrl);
+        String shortUrl = backend.shortenURL(longUrl);
         
-        if (shortUrl.equals("Invalid")) {
+        if (shortUrl.equals("i")) {
             Map<String, String> response = new HashMap<>();
             response.put("error", "Invalid URL");
             return ResponseEntity.ok(response);
         }
+
         Map<String, String> response = new HashMap<>();
         response.put("success", shortUrl);
 
