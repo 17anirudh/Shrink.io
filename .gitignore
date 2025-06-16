@@ -1,0 +1,12 @@
+/.vscode
+spring-boot/target/
+spring-boot/build/
+spring-boot/dist/
+spring-boot/out/
+spring-boot/*.class
+spring-boot/*.jar
+spring-boot/*.war
+spring-boot/*.ear
+spring-boot/HELP.md
+Dockerfile
+.dockerignore
