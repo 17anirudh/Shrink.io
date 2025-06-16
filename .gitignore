@@ -1,4 +1,4 @@
-/.vscode
+vscode
 spring-boot/target/
 spring-boot/build/
 spring-boot/dist/
