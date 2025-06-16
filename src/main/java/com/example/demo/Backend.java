@@ -32,7 +32,7 @@ public class Backend {
     }
 
     public String shortenURL(String longUrl) {
-        String verification = isValidURL(longUrl).toLowerCase();
+        String verification = isValidURL(longUrl);
         String key;
         if (verification.equals("i")) {
             return "Invalid";
@@ -47,7 +47,6 @@ public class Backend {
             return key;
         }
         else {
-            db.insertValues(verification, longUrl);
             return verification;
         }
     }
