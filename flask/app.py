@@ -17,11 +17,11 @@ def handle_redirect(key: str):
     try:
         #Change to host=localhost, port=.... when running locally
         connection = connect(
-            host='mariadb',
+            host='mysql.railway.internal',
             port=3306,
-            database='uri',
+            database='railway',
             user='root',
-            password='root@2004'
+            password='sdbYUGACuTRFNNkEMmSZUNMHeoaleEyl'
         )
         cursor = connection.cursor()
         cursor.execute("""
