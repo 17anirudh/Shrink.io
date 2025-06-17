@@ -20,4 +20,5 @@ flask/__pycache__/
 
 versions.txt
 .vscode/
+.dockerignore
 docker-compose.yaml

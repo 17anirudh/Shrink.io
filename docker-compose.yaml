@@ -1,7 +1,7 @@
 services:
   spring:
-    build: ./spring-boot
-    container_name: springboot-java
+    build: ./spring
+    container_name: spring-java
     ports:
       - "8100:8100"
     depends_on:
