@@ -15,8 +15,9 @@ def error():
 def handle_redirect(key: str):
     print(key)
     try:
+        #Change to host=localhost, port=.... when running locally
         connection = connect(
-            host='localhost',
+            host='mariadb',
             port=3306,
             database='uri',
             user='root',

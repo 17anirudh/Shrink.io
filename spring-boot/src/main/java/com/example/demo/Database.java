@@ -15,7 +15,8 @@ public class Database {
     }
     public Connection openConnection(){
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/uri", "root", "root@2004");
+            //Change to jdbc:mariadb://localhose:3306.... when running locally
+            Connection conn = DriverManager.getConnection("jdbc:mariadb://mariadb:3306/uri", "root", "root@2004");
             String sql = """
                 CREATE TABLE IF NOT EXISTS url (
                     id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,

@@ -1,7 +1,7 @@
 services:
   spring:
     build: ./spring-boot
-    container_name: java-backend
+    container_name: springboot-java
     ports:
       - "8100:8100"
     depends_on:
@@ -9,7 +9,7 @@ services:
 
   flask:
     build: ./flask
-    container_name: python-backend
+    container_name: flask-py
     ports:
       - "5400:5400"
     depends_on:
@@ -17,7 +17,7 @@ services:
 
   mariadb:
     image: bitnami/mariadb:10.11.11-debian-12-r11
-    container_name: mariadb-db
+    container_name: mariadb-mysql
     environment:
       - MARIADB_ROOT_PASSWORD=root@2004
       - MARIADB_DATABASE=uri
