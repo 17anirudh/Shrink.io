@@ -32,7 +32,6 @@ public class Backend {
     }
 
     public String shortenURL(String longUrl) {
-        db.showTable(); //remove when deploying
         String verification = isValidURL(longUrl);
         String key;
         if (verification.equals("i")) {
