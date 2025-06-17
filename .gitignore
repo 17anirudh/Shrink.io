@@ -22,3 +22,4 @@ versions.txt
 .vscode/
 .dockerignore
 docker-compose.yaml
+sample-compose.yaml
