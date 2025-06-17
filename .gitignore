@@ -1,4 +1,3 @@
-.vscode
 spring-boot/target/
 spring-boot/build/
 spring-boot/dist/
@@ -13,8 +12,6 @@ spring-boot/Dockerfile
 spring-boot/README.Docker.md
 spring-boot/.vscode/
 
-.vscode/
-
 flask/.dockerignore
 flask/Dockerfile
 flask/README.Docker.md
@@ -22,3 +19,5 @@ flask/.vscode/
 flask/__pycache__/
 
 versions.txt
+.vscode/
+docker-compose.yaml
