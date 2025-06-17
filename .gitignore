@@ -13,7 +13,6 @@ spring-boot/README.Docker.md
 spring-boot/.vscode/
 
 flask/.dockerignore
-flask/Dockerfile
 flask/README.Docker.md
 flask/.vscode/
 flask/__pycache__/
