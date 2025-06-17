@@ -16,6 +16,17 @@ public class Database {
     public Connection openConnection(){
         try {
             Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/uri", "root", "root@2004");
+            String sql = """
+                CREATE TABLE IF NOT EXISTS url (
+                    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    pack VARCHAR(20),
+                    link TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """;
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.execute();
+            stmt.close();
             return conn;
         }
         catch (SQLTimeoutException e)

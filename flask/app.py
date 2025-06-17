@@ -1,6 +1,5 @@
 from flask import Flask, redirect, render_template
 from mysql.connector import connect
-from mysql.connector.connection import MySQLConnection as MariaDB
 
 app = Flask(__name__)
 
@@ -24,6 +23,14 @@ def handle_redirect(key: str):
             password='root@2004'
         )
         cursor = connection.cursor()
+        cursor.execute("""
+                CREATE TABLE IF NOT EXISTS url (
+                    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    pack VARCHAR(20),
+                    link TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
         query = 'SELECT link FROM url WHERE pack = %s'
         cursor.execute(query, (key,))
         result = cursor.fetchall()
@@ -39,5 +46,6 @@ def handle_redirect(key: str):
     finally:
         cursor.close()
         connection.close()
+
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5400)
