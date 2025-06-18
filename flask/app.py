@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template
 from mysql.connector import connect
+import logging
 
 app = Flask(__name__)
 
@@ -9,6 +10,7 @@ def index():
 
 @app.route('/<string:key>')
 def handle_redirect(key: str):
+    app.logger.info("key" + key)
     print(key)
     try:
         connection = connect(
@@ -23,6 +25,7 @@ def handle_redirect(key: str):
         query = 'SELECT link FROM url WHERE pack = %s'
         cursor.execute(query, (key,))
         result = cursor.fetchall()
+        app.logger.info(f"Key: {key}, Query result: {result}")
         print(f"Query result: {result}")
         if result:
             return redirect(result[0][0]), 302
