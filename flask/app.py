@@ -1,6 +1,5 @@
 from flask import Flask, redirect, render_template
 from sqlalchemy import create_engine, text
-import logging
 
 app = Flask(__name__)
 
@@ -16,10 +15,10 @@ def handle_redirect(key: str):
         result = ""
         with connection.connect() as conn:
             query = text("SELECT link FROM url WHERE pack = :key")
-            result = conn.execute(query, {"key": key}).fetchone()
-            result = result[0]
+            response = conn.execute(query, {"key": key}).fetchone()
+            result = response[0]
         if result:
-            return redirect(result[0][0]), 302
+            return redirect(result), 302
         else:
             return render_template('error.html'), 404
 
@@ -27,11 +26,6 @@ def handle_redirect(key: str):
         print(f'Exception: {e}')
         app.logger.info(e)
         return render_template('error.html'), 404
-    finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'connection' in locals():
-            connection.close()
 
 
 @app.errorhandler(404)
