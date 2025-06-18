@@ -34,6 +34,7 @@ def handle_redirect(key: str):
 
     except Exception as e:
         print(f'Exception: {e}')
+        app.logger.info(e)
         return render_template('error.html'), 404
     finally:
         if 'cursor' in locals():
