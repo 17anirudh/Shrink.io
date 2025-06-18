@@ -9,10 +9,12 @@ def index():
 
 @app.errorhandler(404)
 def error():
+    print('404')
     return render_template('error.html')
 
 @app.errorhandler(500)
 def error2():
+    print('500')
     return render_template('error.html')
 
 @app.route('/<string:key>')
@@ -41,9 +43,9 @@ def handle_redirect(key: str):
         result = cursor.fetchall()
 
         if result:
-            return redirect(result[0][0])  
+            return redirect(result[0][0]), 302
         else:
-            return render_template('error.html')
+            return render_template('error.html'), 404
 
     except Exception as e:
         print(f'Exception: {e}')
