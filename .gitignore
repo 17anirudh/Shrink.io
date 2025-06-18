@@ -15,6 +15,7 @@ spring-boot/.vscode/
 flask/.dockerignore
 flask/README.Docker.md
 flask/.vscode/
+flask/venv
 flask/__pycache__/
 
 versions.txt
