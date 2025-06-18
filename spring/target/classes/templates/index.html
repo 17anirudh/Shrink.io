@@ -317,7 +317,7 @@
                 document.querySelector('.message').innerText = result.error;
                 return;
             }
-            key.value = result.success;
+            key.value = 'https://retrieve.up.railway.app/' + result.success;
         }
         function copy() {
             const key = document.querySelector('input[name=key]');
