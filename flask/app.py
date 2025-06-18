@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template
-from mysql.connector import connect
+from sqlalchemy import create_engine, text
 import logging
 
 app = Flask(__name__)
@@ -11,19 +11,13 @@ def index():
 @app.route('/<string:key>')
 def handle_redirect(key: str):
     try:
-        connection = connect(
-            host='shinkansen.proxy.rlwy.net',
-            port=55957,
-            user='root',
-            password='sdbYUGACuTRFNNkEMmSZUNMHeoaleEyl',
-            database='railway'
-        )
-        print('Connected')
-        cursor = connection.cursor()
-        query = 'SELECT link FROM url WHERE pack = %s'
-        cursor.execute(query, (key,))
-        result = cursor.fetchall()
-        app.logger.info(f"Key: {key}\nquery: {query}\nresult:{result}")
+        DATABASE_URL = "mysql+pymysql://root:sdbYUGACuTRFNNkEMmSZUNMHeoaleEyl@shinkansen.proxy.rlwy.net:55957/railway"
+        connection = create_engine(DATABASE_URL)
+        result = ""
+        with connection.connect() as conn:
+            query = text("SELECT link FROM url WHERE pack = :key")
+            result = conn.execute(query, {"key": key}).fetchone()
+            result = result[0]
         if result:
             return redirect(result[0][0]), 302
         else:
