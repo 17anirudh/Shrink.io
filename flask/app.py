@@ -10,8 +10,6 @@ def index():
 
 @app.route('/<string:key>')
 def handle_redirect(key: str):
-    app.logger.info("key" + key)
-    print(key)
     try:
         connection = connect(
             host='shinkansen.proxy.rlwy.net',
@@ -25,8 +23,7 @@ def handle_redirect(key: str):
         query = 'SELECT link FROM url WHERE pack = %s'
         cursor.execute(query, (key,))
         result = cursor.fetchall()
-        app.logger.info(f"Key: {key}, Query result: {result}")
-        print(f"Query result: {result}")
+        app.logger.info(f"Key: {key}\nquery: {query}\nresult:{result}")
         if result:
             return redirect(result[0][0]), 302
         else:
