@@ -23,7 +23,7 @@ def handle_redirect(key: str):
         query = 'SELECT link FROM url WHERE pack = %s'
         cursor.execute(query, (key,))
         result = cursor.fetchall()
-
+        print(f"Query result: {result}")
         if result:
             return redirect(result[0][0]), 302
         else:
@@ -31,7 +31,7 @@ def handle_redirect(key: str):
 
     except Exception as e:
         print(f'Exception: {e}')
-        return render_template('error.html')
+        return render_template('error.html'), 404
     finally:
         if 'cursor' in locals():
             cursor.close()
