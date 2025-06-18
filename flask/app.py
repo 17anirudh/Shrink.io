@@ -11,27 +11,31 @@ def index():
 def error():
     return render_template('error.html')
 
+@app.errorhandler(500)
+def error2():
+    return render_template('error.html')
+
 @app.route('/<string:key>')
 def handle_redirect(key: str):
     print(key)
     try:
-        #Change to host=localhost, port=.... when running locally
         connection = connect(
-            host='mysql.railway.internal',
-            port=3306,
-            database='railway',
+            host='shinkansen.proxy.rlwy.net',
+            port=55957,
             user='root',
-            password='sdbYUGACuTRFNNkEMmSZUNMHeoaleEyl'
+            password='sdbYUGACuTRFNNkEMmSZUNMHeoaleEyl',
+            database='railway'
         )
+        print('Connected')
         cursor = connection.cursor()
-        cursor.execute("""
-                CREATE TABLE IF NOT EXISTS url (
-                    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                    pack VARCHAR(20),
-                    link TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                );
-            """)
+        '''cursor.execute("""
+            CREATE TABLE IF NOT EXISTS url (
+                id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                pack VARCHAR(20),
+                link TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)'''
         query = 'SELECT link FROM url WHERE pack = %s'
         cursor.execute(query, (key,))
         result = cursor.fetchall()
@@ -45,8 +49,10 @@ def handle_redirect(key: str):
         print(f'Exception: {e}')
         return render_template('error.html')
     finally:
-        cursor.close()
-        connection.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5400)

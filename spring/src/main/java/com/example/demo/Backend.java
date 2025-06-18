@@ -35,6 +35,7 @@ public class Backend {
         String verification = isValidURL(longUrl);
         String key;
         if (verification.equals("i")) {
+            db.closeConnection();
             return "Invalid";
         }
         else if (verification.equals("v")) {
@@ -44,10 +45,12 @@ public class Backend {
                 key = toBase62(bigInt).substring(0, 8); 
             } while (db.keyExists(key));
             db.insertValues(key, longUrl);
+            db.closeConnection();
             return key;
         }
         else {
             System.out.println("Key already there");
+            db.closeConnection();
             return verification;
         }
     }

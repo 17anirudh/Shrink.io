@@ -6,17 +6,18 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLTimeoutException;
 
 @Component
 public class Database {
-    public void printSQLExceptionErroStatement(){
-        System.out.println("Database connection not established");
+    Connection conn = null;
+    PreparedStatement stmt = null;
+    ResultSet result = null;
+    public Database(){
+        openConnection();
     }
-    public Connection openConnection(){
+    public void openConnection(){
         try {
-            //Change to jdbc:mariadb://localhose:3306.... when running locally
-            Connection conn = DriverManager.getConnection("jdbc:mysql://mysql.railway.internal:3306/railway", "root", "sdbYUGACuTRFNNkEMmSZUNMHeoaleEyl");
+            conn = DriverManager.getConnection("jdbc:mysql://root:sdbYUGACuTRFNNkEMmSZUNMHeoaleEyl@shinkansen.proxy.rlwy.net:55957/railway");
             String sql = """
                 CREATE TABLE IF NOT EXISTS url (
                     id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -25,98 +26,73 @@ public class Database {
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """;
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt = conn.prepareStatement(sql);
             stmt.execute();
-            stmt.close();
-            return conn;
         }
-        catch (SQLTimeoutException e)
-        {
-            System.out.println("Timeout, please wait....");
-            System.exit(0);
-        } 
         catch (SQLException e) {
-            printSQLExceptionErroStatement();
-            System.exit(0);
-        }
-        return null;
-    }
-    public void insertValues(String key, String url){
-        try {
-            Connection conn = openConnection();
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO url (pack, link) VALUES (?, ?)");
-            statement.setString(1, key);
-            statement.setString(2, url);
-            statement.executeUpdate();
-            conn.close();
-            statement.close();
-        }
-        catch (SQLException e){
-            printSQLExceptionErroStatement();
+            System.out.println("Can't connect");
             System.exit(0);
         }
     }
     public boolean keyExists(String key){
         try {
-            Connection conn = openConnection();
-            PreparedStatement statement = conn.prepareStatement("SELECT pack from url WHERE pack = ?");
-            statement.setString(1, key);
-            ResultSet rs = statement.executeQuery();
+            stmt = conn.prepareStatement("SELECT pack from url WHERE pack = ?");
+            stmt.setString(1, key);
+            ResultSet rs = stmt.executeQuery();
             boolean found = rs.next();
-            if (found) {
-                conn.close();
-                statement.close();
-                rs.close();
-                return true;
-            }
-            statement.close();
             rs.close();
-            return false;
+            stmt.close();
+            return found;
         }
         catch (SQLException e) {
-            printSQLExceptionErroStatement();
+            System.out.println("Can't check if key exists");
             System.exit(0);
         }
         return false;
     }
     public String[] urlExists(String url){
         try {
-            Connection conn = openConnection();
-            PreparedStatement statement = conn.prepareStatement("SELECT pack from url WHERE link = ?");
-            statement.setString(1, url);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()){
+            stmt = conn.prepareStatement("SELECT pack from url WHERE link = ?");
+            stmt.setString(1, url);
+            System.out.println(stmt.toString());
+            result = stmt.executeQuery();
+            if (result.next()){
+                String a = result.getString("pack");
                 conn.close();
-                statement.close();
-                rs.close();
-                return new String[] {"true", rs.getString("pack")};
+                result.close();
+                stmt.close();
+                return new String[] {"true", a};
             }
-            conn.close();
-            statement.close();
-            rs.close();
+            result.close();
+            stmt.close();
             return new String[]{"false", "nothing"};
         }
         catch (SQLException e) {
-            printSQLExceptionErroStatement();
+            System.out.println("Can't check if url exists");
             System.exit(0);
         }
         return new String[]{"false", "nothing"};
     }
-    public void showTable(){
+    public void insertValues(String key, String url){
         try {
-            Connection conn = openConnection();
-            PreparedStatement statement = conn.prepareStatement("SELECT * FROM url;");
-            ResultSet output = statement.executeQuery();
-            while(output.next()){
-                System.out.println(output.getString("pack") + "\t" + output.getString("link"));
-            }
-            conn.close();
-            statement.close();
-            output.close();
+            stmt = conn.prepareStatement("INSERT INTO url (pack, link) VALUES (?, ?)");
+            stmt.setString(1, key);
+            stmt.setString(2, url);
+            stmt.executeUpdate();
+            stmt.close();
         }
         catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("Can't insert values");
             System.exit(0);
+        }
+    }
+    public void closeConnection(){
+        try {
+            if (result != null) result.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            System.out.println("Error closing connection");
         }
     }
 }
