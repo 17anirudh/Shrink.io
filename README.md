@@ -16,6 +16,9 @@ This is fully deployed in cloud PaaS [Railway](https://railway.com), and is clou
 - Lightweight Flask framwork handles redirection independently
 - Dockerized and deployed on Railway with persistent MySQL backend
 
+## Flowchart
+![Flowchat](/shrink.io%20flowchart.png)
+
 ## Tech Stack
 - Data Processing: UUID, Base62
 - Frontend: Vanilla JS (along with HTML, CSS)
