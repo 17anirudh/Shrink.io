@@ -73,7 +73,7 @@ These are the 2 images you have to use
 Using __docker run__
   - You can remove -d to see live logs
   - You can assign a different port in <your-desired-port> only for spring-boot
-  - __⚠️ IMPORTANT:__ Do not change the port number for FLASK-IMAGE, always keep it [localhost:5000](localhost:5400) 
+  - __⚠️ IMPORTANT:__ Do not change the port number for FLASK-IMAGE, always keep it [localhost:5400](localhost:5400) 
 
   ```bash
   docker run 17veed/sql-spring:offline -d -p <your-desired-port>:8100 --name <image-name-spring>
