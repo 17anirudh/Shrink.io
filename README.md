@@ -2,14 +2,13 @@
 # shrink.io
 Full Stack application which shortens any working website link, into a short link
 
-## Screenshot
-![App Screenshot](/shrink.io.png)
-
 ## Overview
 shrink.io is a full stack web application built with the SVFM stack (Spring Boot with Thymeleaf, Vanilla JS, Flask with SQLAlchemy, and MySQL). It shortens long URLs into encrypted short links using UUID + Base62 key generation and redirects users to the original URL.
 
 This is fully deployed in cloud PaaS [Railway](https://railway.com), and is cloud-native, containerized microservices having shared persistant mySQL database.
 
+## Screenshot
+![App Screenshot](/shrink.io.png)
 
 ## Features
 - Web interface built using Spring Boot (Thymeleaf) and Vanilla JS for smooth user experience
@@ -18,7 +17,6 @@ This is fully deployed in cloud PaaS [Railway](https://railway.com), and is clou
 - Dockerized and deployed on Railway with persistent MySQL backend
 
 ## Tech Stack
-
 - Data Processing: UUID, Base62
 - Frontend: Vanilla JS (along with HTML, CSS)
 - Database: MySQL
@@ -26,9 +24,7 @@ This is fully deployed in cloud PaaS [Railway](https://railway.com), and is clou
 - Deployment: Docker and Railways
 
 
-
 ## Installation
-
 You can install either from github or locally pull from online docker image
 
 ## 1. Through Github  
