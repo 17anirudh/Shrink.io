@@ -1,6 +1,6 @@
 
 # shrink.io
-Full Stack application which shortens any working website link, into a short link
+Full Stack application which shortens any working website link, into a short link (currently offline due to budget)
 
 ## Overview
 shrink.io is a full stack web application built with the SVFM stack (Spring Boot with Thymeleaf, Vanilla JS, Flask with SQLAlchemy, and MySQL). It shortens long URLs into encrypted short links using UUID + Base62 key generation and redirects users to the original URL.
